@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.hardware.camera2.*;
 
-public class MainActivity extends Activity {
+public class MainCamerAPI extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
