@@ -42,6 +42,7 @@ public class MainActivity extends Activity
 		btn_opencamera = (Button) findViewById(R.id.btn_takepicture);
 		manager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
 		openCamera();
+		createCameraPreview();
 		btn_opencamera.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View arg0) 
@@ -102,10 +103,6 @@ public class MainActivity extends Activity
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-			/*int[] modes_available;
-			modes_available = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
-			for(int i=0; i<modes_available.length; ++i)
-				System.out.println(modes_available[i]);*/
 			
 			//Asking for user permissions
 			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -124,7 +121,7 @@ public class MainActivity extends Activity
 			};
 			
 			manager.openCamera(cameraID[0],callback ,null);
-			createCameraPreview();
+			//createCameraPreview();
 		}
 		catch (CameraAccessException e) 
 		{
@@ -137,7 +134,8 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	protected void createCameraPreview() {
+	protected void createCameraPreview() 
+	{
         try 
         {
         	System.out.println("in create camera preview method");
@@ -159,7 +157,15 @@ public class MainActivity extends Activity
             		}
             		// When the session is ready, we start displaying the preview.
             		cameraCaptureSessions = cameraCaptureSession;
-            		// updatePreview();
+            		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+                    try
+            		{
+            			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+            		}
+                    catch (CameraAccessException e)
+            		{
+            			e.printStackTrace();
+            		}
             	}
             	@Override
             	public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession)
@@ -170,16 +176,7 @@ public class MainActivity extends Activity
         }
         catch (CameraAccessException e)
         {
-                 e.printStackTrace();
+        	e.printStackTrace();
         }
-        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        try
-		{
-			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
-		}
-        catch (CameraAccessException e)
-		{
-			e.printStackTrace();
-		}
     }
 }
