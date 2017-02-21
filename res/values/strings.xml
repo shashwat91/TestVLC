@@ -4,5 +4,6 @@
     <string name="app_name">TestVLC</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="button_open">Open Camera</string>
 
 </resources>
