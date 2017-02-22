@@ -169,13 +169,24 @@ public class MainCamerAPI extends AppCompatActivity
             if (characteristics != null) 
             {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
+                System.out.println("Available sizes");
+                for(int i=0;i<jpegSizes.length;++i)
+                	System.out.println(jpegSizes[i].getWidth() +","+jpegSizes[i].getHeight());
             }
-            int width = 640;
+            int width = 640; //Default values
             int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length)
+            if (jpegSizes != null && 0 < jpegSizes.length)	//Setting image size as 1920x1080 if available
             {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
+            	for(int i=0;i<jpegSizes.length;++i)
+            	{
+            		if(jpegSizes[i].getWidth() == 1920)
+            		{
+            			width = 1920;
+            			height = 1080;
+            			break;
+            		}
+            	}
+                System.out.println("selected size::"+width +","+height);
             }
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             List<Surface> outputSurfaces = new ArrayList<Surface>(2);
