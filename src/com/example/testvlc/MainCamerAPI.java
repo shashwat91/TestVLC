@@ -198,7 +198,7 @@ public class MainCamerAPI extends AppCompatActivity
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            final File file = new File("/storage/emulated/0/blobtest/pic.jpg");
             
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() 
             {
@@ -212,14 +212,16 @@ public class MainCamerAPI extends AppCompatActivity
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        save(bytes);
+                        ProcessImage process = new ProcessImage(image);
+                        process.processframe();
+                        //save(bytes);
                     }
-                    catch (FileNotFoundException e) {
+                    /*catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     catch (IOException e) {
                         e.printStackTrace();
-                    }
+                    }*/
                     finally 
                     {
                         if (image != null)
