@@ -27,8 +27,9 @@ public class ProcessImage
 	
 	public int processframe()
 	{
-		try{
-		save(image,"test_name");
+		try
+		{
+		save(image,"testName_");
 		}
 		//Catch for save function
 		catch (FileNotFoundException e) {
@@ -46,9 +47,9 @@ public class ProcessImage
 		ByteBuffer buffer = imagetosave.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
-        dateFormat = new SimpleDateFormat("yyyyMMdd_mmss");
+        dateFormat = new SimpleDateFormat("hhmmss_yyyyMMdd");
         date = new Date();
-        final File file = new File(filePath+name+dateFormat.format(date)+".jpg");
+        file = new File(filePath+name+dateFormat.format(date)+".jpg");
         OutputStream output = null;
         try
         {
