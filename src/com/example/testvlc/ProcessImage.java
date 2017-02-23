@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.media.Image;
 
@@ -14,6 +17,8 @@ public class ProcessImage
 	private Image image=null;
 	private File file;
 	String filePath = "/storage/emulated/0/blobtest/";
+	DateFormat dateFormat;
+	Date date;
 	 
 	ProcessImage(Image input)
 	{
@@ -41,7 +46,9 @@ public class ProcessImage
 		ByteBuffer buffer = imagetosave.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
-        final File file = new File(filePath+name+".jpg");
+        dateFormat = new SimpleDateFormat("yyyyMMdd_mmss");
+        date = new Date();
+        final File file = new File(filePath+name+dateFormat.format(date)+".jpg");
         OutputStream output = null;
         try
         {
