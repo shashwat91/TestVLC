@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 
 public class ProcessImage 
 {
@@ -29,6 +30,8 @@ public class ProcessImage
 	{
 		assert input != null;
 		image=input;
+		dateFormat = new SimpleDateFormat("hhmm_yyMMdd");
+		date = new Date();
 		Log.d(TAG, "Processing object created");
 	}
 	
@@ -36,14 +39,17 @@ public class ProcessImage
 	{
 		Log.d(TAG, "Strting Blob processing");
 		Log.d(TAG, "Dimensions of image :: "+image.getWidth()+image.getHeight());
-		//ImageUtils conv = new ImageUtils();
-		//Mat inp_image = conv.imageToMat(image);
 		save(image,"original_");
 		
+		/*Initialising all Mat*/
 		Mat inp_image = Highgui.imread(lastPath);
+		Mat grey_img = null;
 		
 		save(inp_image,"convImage_");
-		//Imgproc.cvtColor(inp_image,gray_img,Imgproc.COLOR_RGB2GRAY);
+		
+		Imgproc.cvtColor(inp_image,grey_img,Imgproc.COLOR_RGB2GRAY); //Changing image to grey scale
+		save(grey_img,"greyImage_");
+		
 		return 42; //Change to actual ID after processing	
 	}
 	
@@ -52,9 +58,8 @@ public class ProcessImage
 		ByteBuffer buffer = imagetosave.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
-        dateFormat = new SimpleDateFormat("hhmmss_yyyyMMdd");
-        date = new Date();
-        lastPath = filePath+name+dateFormat.format(date)+".jpg";
+       
+        lastPath = filePath+dateFormat.format(date)+name+".jpg";
         file = new File(lastPath);	//With date tag
         //file = new File(filePath+name+".jpg"); //Without date tag
         OutputStream output = null;
@@ -72,20 +77,8 @@ public class ProcessImage
 	
 	private void save(Mat image, String name)
 	{
-		dateFormat = new SimpleDateFormat("hhmmss_yyyyMMdd");
-        date = new Date();
-        lastPath = filePath+name+dateFormat.format(date)+".jpg";	//With date tag
+        lastPath = filePath+dateFormat.format(date)+name+".jpg";	//With date tag
         //String file = new filePath+name+".jpg"; //Without date tag
         Highgui.imwrite(lastPath,image);
-	}
-	
-	private Mat img2mat(Image inp)
-	{
-		Mat mat = new Mat(inp.getHeight(), inp.getWidth(), CvType.CV_8UC3);
-		ByteBuffer buffer = inp.getPlanes()[0].getBuffer();
-        byte[] bytes = new byte[buffer.capacity()];
-        buffer.get(bytes);
-        mat.put(0, 0, bytes);
-		return mat;
 	}
 }
