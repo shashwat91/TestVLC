@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.opencv.android.OpenCVLoader;
+
 public class MainCamerAPI extends AppCompatActivity 
 {
     private static final String TAG = "AndroidCameraApi";
@@ -49,10 +51,17 @@ public class MainCamerAPI extends AppCompatActivity
     private Size imageDimension;
     private ImageReader imageReader;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private int blobID;
+    
+    static {
+        if (!OpenCVLoader.initDebug()) {
+        	Log.e(TAG, "Error in intilising OpenCV library");
+        }
+        else
+        	Log.e(TAG, "OpenCV library initialised");
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -356,6 +365,7 @@ public class MainCamerAPI extends AppCompatActivity
     {
         super.onResume();
         Log.e(TAG, "onResume");
+
         startBackgroundThread();
         if (textureView.isAvailable()) 
         {
