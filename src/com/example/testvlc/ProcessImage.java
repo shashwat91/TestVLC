@@ -21,6 +21,13 @@ public class ProcessImage
 	private Date date;
 	private static final String TAG = "ProcessingAPI";
 	 
+	static 
+	{
+		System.loadLibrary("jni_imgPros");
+	}
+
+	public native int[] decode(int width, int height, byte[] NV21FrameData, int centerRow, int centerColumn, int blobRadius);
+	
 	ProcessImage(Image input)
 	{
 		assert input != null;
@@ -64,11 +71,4 @@ public class ProcessImage
         }
         return bytes;
     }
-	
-	static 
-	{
-		System.loadLibrary("jni_imgPros");
-	}
-
-	public native int[] decode(int width, int height, byte[] NV21FrameData, int centerRow, int centerColumn, int blobRadius);
 }
