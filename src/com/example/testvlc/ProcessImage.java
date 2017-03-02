@@ -56,6 +56,7 @@ public class ProcessImage
 		int[][] returnMatrix = new int[10][10];
 		detector(grey_img, returnMatrix);
 		save(grey_img,"detector_");
+		Log.d(TAG,""+returnMatrix[0][0]+","+returnMatrix[0][1]+","+returnMatrix[0][2]);
 		
 		return 42; //Change to actual ID after processing	
 	}
