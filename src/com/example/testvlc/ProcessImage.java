@@ -12,16 +12,11 @@ import java.util.Date;
 import android.media.Image;
 import android.util.Log;
 
-import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
-
 public class ProcessImage 
 {
 	private Image image=null;
 	private File file;
 	private String filePath = "/storage/emulated/0/blobtest/";
-	private String lastPath=null;
 	private DateFormat dateFormat;
 	private Date date;
 	private static final String TAG = "ProcessingAPI";
@@ -39,28 +34,22 @@ public class ProcessImage
 	{
 		Log.d(TAG, "Strting Blob processing");
 		Log.d(TAG, "Dimensions of image :: "+image.getWidth()+image.getHeight());
-		save(image,"original_");
+		byte[] bytes = save(image,"original_");
 		
-		/*Initialising all Mat*/
-		Mat inp_image = Highgui.imread(lastPath);
-		Mat grey_img = null;
-		
-		save(inp_image,"convImage_");
-		
-		Imgproc.cvtColor(inp_image,grey_img,Imgproc.COLOR_RGB2GRAY); //Changing image to grey scale
-		save(grey_img,"greyImage_");
-		
+		int row=0,col=0,radius=0;
+		int[] result = decode(image.getWidth(), image.getHeight(), bytes, row, col, radius);
+		//System.out.println(result[0]);
 		return 42; //Change to actual ID after processing	
 	}
 	
-	private void save(Image imagetosave, String name) throws IOException 
+	private byte[] save(Image imagetosave, String name) throws IOException 
     {
 		ByteBuffer buffer = imagetosave.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
        
-        lastPath = filePath+dateFormat.format(date)+name+".jpg";
-        file = new File(lastPath);	//With date tag
+        String path = filePath+dateFormat.format(date)+name+".jpg";
+        file = new File(path);	//With date tag
         //file = new File(filePath+name+".jpg"); //Without date tag
         OutputStream output = null;
         try
@@ -73,12 +62,13 @@ public class ProcessImage
             if (null != output)
                 output.close();
         }
+        return bytes;
     }
 	
-	private void save(Mat image, String name)
+	static 
 	{
-        lastPath = filePath+dateFormat.format(date)+name+".jpg";	//With date tag
-        //String file = new filePath+name+".jpg"; //Without date tag
-        Highgui.imwrite(lastPath,image);
+		System.loadLibrary("jni_imgPros");
 	}
+
+	public native int[] decode(int width, int height, byte[] NV21FrameData, int centerRow, int centerColumn, int blobRadius);
 }
