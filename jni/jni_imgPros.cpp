@@ -21,16 +21,20 @@ Mat * mCanny = NULL;
 
 extern "C"
 {
-	JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height,jbyteArray NV21FrameData, jint centerRow, jint centerColumn, jint blobRadius );
-	void detector(Mat input, vector< vector<int> > &returnMatrix);
+  JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius );
+  void detector(Mat input, vector< vector<int> > &returnMatrix);
 
 
-	JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height,jbyteArray NV21FrameData, jint centerRow, jint centerColumn, jint blobRadius )
-	{
-		LOGE("c++ code initialised");
-		jintArray result;
-		return result;
-	}
+  JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius )
+  {
+    LOGE("c++ code initialised");
+    string file = "/storage/emulated/0/blobtest/";
+    Mat rec,grey;
+    rec = imread(file+"original_.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+    imwrite(file + "rec_image.jpg",rec);
+    jintArray result;
+    return result;
+  }
 
 	void detector(Mat input, vector< vector<int> > &returnMatrix)
 	{

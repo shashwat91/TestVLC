@@ -20,13 +20,14 @@ public class ProcessImage
 	private DateFormat dateFormat;
 	private Date date;
 	private static final String TAG = "ProcessingAPI";
+	private String path;
 	 
 	static 
 	{
 		System.loadLibrary("jni_imgPros");
 	}
 
-	public native int[] decode(int width, int height, byte[] NV21FrameData, int centerRow, int centerColumn, int blobRadius);
+	public native int[] decode(int width, int height, int centerRow, int centerColumn, int blobRadius);
 	
 	ProcessImage(Image input)
 	{
@@ -44,7 +45,7 @@ public class ProcessImage
 		byte[] bytes = save(image,"original_");
 		
 		int row=0,col=0,radius=0;
-		int[] result = decode(image.getWidth(), image.getHeight(), bytes, row, col, radius);
+		int[] result = decode(image.getWidth(), image.getHeight(), row, col, radius);
 		//System.out.println(result[0]);
 		return 42; //Change to actual ID after processing	
 	}
@@ -55,9 +56,10 @@ public class ProcessImage
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
        
-        String path = filePath+dateFormat.format(date)+name+".jpg";
-        file = new File(path);	//With date tag
-        //file = new File(filePath+name+".jpg"); //Without date tag
+        //path = filePath+dateFormat.format(date)+name+".jpg";
+        //file = new File(path);	//With date tag
+        path = filePath+name+".jpg";
+        file = new File(path); //Without date tag
         OutputStream output = null;
         try
         {
