@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -206,22 +207,30 @@ public class MainCamerAPI extends AppCompatActivity
                 @Override
                 public void onImageAvailable(ImageReader reader)
                 {
-                    Image image = null;
-                    try 
-                    {
-                        image = reader.acquireLatestImage();
-                        ProcessImage process = new ProcessImage(image);
-                        blobID = process.processframe();
+                    //Image image = null;
+                	final Image image = reader.acquireLatestImage();
+                    try{
+                        new Thread(new Runnable() 
+                        {
+                            public void run()
+                            {
+                            	ProcessImage process = new ProcessImage(image);
+                                try 
+                                {
+									blobID = process.processframe();
+									//Toast.makeText(MainCamerAPI.this, "Result:"+blobID, Toast.LENGTH_SHORT).show();
+								}
+                                catch (IOException e)
+                                {
+									e.printStackTrace();
+								}
+                            }
+                       }).start();
+                        
                     }
                     catch(Exception e){
                     	e.printStackTrace();
-                    }
-                    
-                    finally 
-                    {
-                        if (image != null)
-                            image.close();
-                    }
+                    }                    
                 }
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
@@ -231,7 +240,6 @@ public class MainCamerAPI extends AppCompatActivity
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
                 {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MainCamerAPI.this, "Result:"+blobID, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };
@@ -332,7 +340,6 @@ public class MainCamerAPI extends AppCompatActivity
         }
     }
     
-    @SuppressWarnings("unused")
 	private void closeCamera()
     {
         if (null != cameraDevice) 
@@ -381,7 +388,7 @@ public class MainCamerAPI extends AppCompatActivity
     protected void onPause() 
     {
         Log.e(TAG, "onPause");
-        //closeCamera();
+        closeCamera();
         stopBackgroundThread();
         super.onPause();
     }

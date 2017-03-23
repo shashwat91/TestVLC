@@ -47,6 +47,7 @@ public class ProcessImage
 		int row=0,col=0,radius=0;
 		int[] result = decode(image.getWidth(), image.getHeight(), row, col, radius);
 		//System.out.println(result[0]);
+		//Log.d(TAG, "Decoded bits" + result[0]);
 		return 42; //Change to actual ID after processing	
 	}
 	

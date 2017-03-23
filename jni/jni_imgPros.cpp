@@ -21,20 +21,58 @@ Mat * mCanny = NULL;
 
 extern "C"
 {
-  JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius );
-  void detector(Mat input, vector< vector<int> > &returnMatrix);
+	JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius );
+  	void detector(Mat input, vector< vector<int> > &returnMatrix);
+  	Mat clahe(Mat input);
+  	Mat blur(Mat input);
+  	Mat adaptiveThreshold(Mat input);
+  	void decodeBits(vector<int>& inputPixels, vector<int>& detectedBits);
+  	int avoidBlobOffset(Mat input, int centerRadius[3]);
+  	void getCorrectedPixelsOffset(Mat input, int centerRadius[3], int offset, vector<int>& correctPixels);
+	
+	JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius )
+	{
+		LOGE("c++ code initialised");
+		string file_path = "/storage/emulated/0/blobtest/";
+		Mat grey_img;
+		grey_img = imread(file_path+"original_.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+		LOGE("image converted to grayScal");
+		imwrite(file_path + "rec_image.jpg",grey_img);
 
+		vector<vector<int> > returnMatrix(5, vector<int>(3)); // contains center positions and radii of blobs
+		LOGE("Starting detector function");
+		detector(grey_img, returnMatrix);
+		LOGE("Circles plotted");
+		imwrite(file_path + "detector_image.jpg", grey_img);
 
-  JNIEXPORT jintArray JNICALL Java_com_example_testvlc_ProcessImage_decode(JNIEnv* env, jobject thiz, jint width, jint height, jint centerRow, jint centerColumn, jint blobRadius )
-  {
-    LOGE("c++ code initialised");
-    string file = "/storage/emulated/0/blobtest/";
-    Mat rec,grey;
-    rec = imread(file+"original_.jpg",CV_LOAD_IMAGE_GRAYSCALE);
-    imwrite(file + "rec_image.jpg",rec);
-    jintArray result;
-    return result;
-  }
+		int centerRadius[3];
+		centerRadius[0] = returnMatrix[0][0];
+		centerRadius[1] = returnMatrix[0][1];
+		centerRadius[2] = ceil(returnMatrix[0][2]*1.5);
+
+		Mat adaptive_equalized = clahe(grey_img);
+		LOGE("adaptive equalisation completed");
+		Mat blurred = blur(adaptive_equalized);
+		LOGE("blur completed");
+		adaptive_equalized.release();
+		Mat adaptive_threshold = adaptiveThreshold(blurred);
+		LOGE("adaptive threshold completed");
+		imwrite(file_path + "adaptive_threshold_image.jpg", adaptive_threshold);
+
+		int offset = avoidBlobOffset(adaptive_threshold, centerRadius);
+		LOGE("offset calculated");
+		vector<int> correctedPixels;
+		getCorrectedPixelsOffset(adaptive_threshold, centerRadius, offset, correctedPixels);
+		imwrite(file_path + "line_image.jpg", correctedPixels);
+		vector<int> detectedBits;
+		decodeBits(correctedPixels, detectedBits);
+		LOGE("bits decoded");
+
+		jintArray result;
+		result = env->NewIntArray(detectedBits.size());
+
+		return result;
+	}
 
 	void detector(Mat input, vector< vector<int> > &returnMatrix)
 	{
@@ -43,6 +81,7 @@ extern "C"
 
 	  Mat otsu;
 	  threshold(blurred_image, otsu, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	  blurred_image.release();
 
 	  Mat cimg = input;
 
@@ -51,6 +90,8 @@ extern "C"
 	  vector<int> radius;
 
 	  findContours(otsu.clone(), contours, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
+	  otsu.release();
+	  LOGE("countours found");
 
 	  size_t count = contours.size();
 
@@ -67,7 +108,7 @@ extern "C"
 		  }
 	  }
 	  int count2 = center.size();
-	  cv::Scalar red(255,255,255);
+	  Scalar red(255,255,255);
 
 	  returnMatrix.resize(count2);
 
@@ -79,10 +120,10 @@ extern "C"
 		  returnMatrix[i][2] = radius[i];
 		  //cout << radius[i];
 	  }
-	  cout<<"detected circles::"<<count2<<endl;
 	}
 
-	Mat clahe(Mat input){
+	Mat clahe(Mat input)
+	{
 
 		Ptr<CLAHE> clahe = createCLAHE();
 		clahe->setClipLimit(10);
