@@ -1,0 +1,1 @@
+frequency set at 1.5kHz and data 101. preamble 01110
