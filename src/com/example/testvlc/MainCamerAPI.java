@@ -172,9 +172,9 @@ public class MainCamerAPI extends AppCompatActivity
             if (characteristics != null) 
             {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-                System.out.println("Available sizes");
-                for(int i=0;i<jpegSizes.length;++i)
-                	System.out.println(jpegSizes[i].getWidth() +","+jpegSizes[i].getHeight());
+                //System.out.println("Available sizes");
+                //for(int i=0;i<jpegSizes.length;++i)
+                	//System.out.println(jpegSizes[i].getWidth() +","+jpegSizes[i].getHeight());
             }
             int width = 640; //Default values
             int height = 480;
@@ -217,16 +217,16 @@ public class MainCamerAPI extends AppCompatActivity
                             	ProcessImage process = new ProcessImage(image);
                                 try 
                                 {
-									blobID = process.processframe();
+									process.processframe();
+									//System.out.println("Result::"+blobID);
 									//Toast.makeText(MainCamerAPI.this, "Result:"+blobID, Toast.LENGTH_SHORT).show();
 								}
-                                catch (IOException e)
+                                catch (Exception e)
                                 {
 									e.printStackTrace();
 								}
                             }
-                       }).start();
-                        
+                        }).start();
                     }
                     catch(Exception e){
                     	e.printStackTrace();

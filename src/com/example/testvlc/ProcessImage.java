@@ -38,7 +38,7 @@ public class ProcessImage
 		Log.d(TAG, "Processing object created");
 	}
 	
-	public int processframe() throws IOException
+	public int[] processframe() throws IOException
 	{
 		Log.d(TAG, "Strting Blob processing");
 		Log.d(TAG, "Dimensions of image :: "+image.getWidth()+image.getHeight());
@@ -46,9 +46,20 @@ public class ProcessImage
 		
 		int row=0,col=0,radius=0;
 		int[] result = decode(image.getWidth(), image.getHeight(), row, col, radius);
+		Log.d(TAG, "Finished Blob processing");
 		//System.out.println(result[0]);
 		//Log.d(TAG, "Decoded bits" + result[0]);
-		return 42; //Change to actual ID after processing	
+		if(result.length == 0)
+		{
+			System.out.println("Image not decoded properly");
+			return null;
+		}
+		Log.d(TAG, "Printing Results of size:"+result.length);
+		for(int i=0; i<result.length; ++i)
+		{
+			System.out.println(result[i]);
+		}
+		return result;
 	}
 	
 	private byte[] save(Image imagetosave, String name) throws IOException 

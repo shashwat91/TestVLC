@@ -36,8 +36,10 @@ extern "C"
 		string file_path = "/storage/emulated/0/blobtest/";
 		Mat grey_img;
 		grey_img = imread(file_path+"original_.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+		transpose(grey_img, grey_img);
+		flip(grey_img, grey_img,1);
 		LOGE("image converted to grayScal");
-		imwrite(file_path + "rec_image.jpg",grey_img);
+		//imwrite(file_path + "rec_image.jpg",grey_img);
 
 		vector<vector<int> > returnMatrix(5, vector<int>(3)); // contains center positions and radii of blobs
 		LOGE("Starting detector function");
@@ -65,11 +67,25 @@ extern "C"
 		getCorrectedPixelsOffset(adaptive_threshold, centerRadius, offset, correctedPixels);
 		imwrite(file_path + "line_image.jpg", correctedPixels);
 		vector<int> detectedBits;
+
 		decodeBits(correctedPixels, detectedBits);
+		jintArray result;
+
+		if(detectedBits.size() == 0)
+		{
+		    LOGE("Image not decoded properly");
+		}
+
 		LOGE("bits decoded");
 
-		jintArray result;
+
+		jint fill[detectedBits.size()];
+
+		for(int i=0; i<detectedBits.size(); i++)
+		  fill[i] = detectedBits[i];
+
 		result = env->NewIntArray(detectedBits.size());
+		env->SetIntArrayRegion(result, 0, detectedBits.size(), fill);
 
 		return result;
 	}
@@ -153,114 +169,116 @@ extern "C"
 
 	void decodeBits(vector<int>& inputPixels, vector<int>& detectedBits)
 	{
-		vector<int> peaks;
-		vector<int> falls;
+	    vector<int> peaks;
+	    vector<int> falls;
 
-		int dif;
-		ofstream fout;
-		int count=0;
-		fout.open("D:\\Study\\Thesis\\eclipse_ws\\CppImagePros\\src\\linePixelCount.csv");
+	    int dif;
 
-		for (unsigned int i = 0; i < inputPixels.size()-1; i++)
-		{
-			if(inputPixels[i] == inputPixels[i+1])
-				count++;
-			else
-			{
-				fout<<inputPixels[i]<<","<<count+1<<endl;
-				count=0;
-			}
+	    for (unsigned int i = 0; i < inputPixels.size()-1; i++)
+	    {
+	        if(inputPixels[i] == 0 && inputPixels[i+1] == 255)
+	        {
+	            peaks.push_back(i);
+	            //cout<<"on "<<i<<endl;
+	        }
+	        else if(inputPixels[i] == 255 && inputPixels[i+1] == 0 && peaks.size() !=0) //Peaks.size()!=0 makes sure that first transition is rising edge
+	        {
+	            falls.push_back(i);
+	            //cout<<"off "<<i<<endl;
+	        }
+	    }
 
-			if(inputPixels[i] == 0 && inputPixels[i+1] == 255)
-			{
-				peaks.push_back(i);
-				//cout<<"on "<<i<<endl;
-			}
-			else if(inputPixels[i] == 255 && inputPixels[i+1] == 0 && peaks.size() !=0)
-			{
-				falls.push_back(i);
-				//cout<<"off "<<i<<endl;
-			}
-		}
+	    if(peaks.size() > falls.size())
+	        peaks.erase(peaks.begin() + peaks.size() - 1);      //Removes the last peak if no fall is associated to it.
 
-		if(peaks.size() > falls.size())
-			peaks.erase(peaks.begin() + peaks.size() - 1);
+	    // for (int i=0; i<=peaks.size()-1; ++i) 
+	    //     cout <<setw(3)<< i <<" :: " << setw(4) << peaks[i] << " , " << setw(4) << falls[i]<<" : "<<setw(4)<<falls[i]-peaks[i]<<endl;
 
-		int j = 1;
-		int firstPreamble=0;
-		int secondPreamble=0;
+	    int j = 1;
+	    int firstPreamble=0;
+	    int secondPreamble=0;
 
-		for (unsigned int i = 0; i < peaks.size(); i++)
-		{
-			dif = falls[i] - peaks[i];
-			cout<<"diff :: "<<dif<<endl;
-			if ( dif >= 2.5 *16 )
-			{ //freq = 3000 -> 2.5*8
-				if( j == 1 )
-				{
-					if(i == 0)
-						continue;
-					firstPreamble = i;
-					j++;
-				}
-				else
-				{
-						secondPreamble = i;
-						break;
-				}
-			}
-		}
+	    for (unsigned int i = 0; i < peaks.size(); i++)
+	    {
+	        dif = falls[i] - peaks[i];
+	        //cout<<"diff :: "<<dif;
+	        if ( dif >= 35 ) //2.5*16=40
+	        { //freq = 3000 -> 2.5*8
+	          //  cout<<"\tPreamble detected";
+	            //WTF!!!  ---  why such a way to get preambles????
+	            //**Change this to something more adaptable
+	            if( j == 1 )
+	            {
+	                if(i == 0)
+	                    continue;
+	                firstPreamble = i;
+	                j++;
+	            }
+	            else
+	            {
+	                secondPreamble = i;
+	                break;
+	            }
+	        }
+	        // cout<<endl;
+	    }
 
-		if(secondPreamble == 0)
-			return;
+	    if(secondPreamble == 0)
+	        return;
 
-		cout << "first " << firstPreamble << " second " << secondPreamble<< "\n" ;
+	    // cout << "\nfirst " << firstPreamble << " second " << secondPreamble<< "\n" ;
 
-		j = 1;
-		int addZero = 0;
+	    j = 1;
+	    int addZero = 0;
 
-		while(true)
-		{
-			dif = peaks[firstPreamble +j] - falls[firstPreamble + j -1];
-			if(dif > 1.3 * 16 )
-			{ //freq = 3000 -> 2.5*8
-				if(j == 1 || (firstPreamble + j == secondPreamble)){
-					cout<<"0";
-					detectedBits.push_back(0);}
-				else
-				{
-					cout << "0";
-					cout << "/0";
-					detectedBits.push_back(0);
-					detectedBits.push_back(0);
-				}
-			}
-			else
-			{
-				if((j != 1 && firstPreamble + j != secondPreamble) || addZero == 1){
-					cout << "0";
-					detectedBits.push_back(0);}
-			}
-			if (firstPreamble + j == secondPreamble)
-				break;
+	    while(true)
+	    {
+	        dif = peaks[firstPreamble +j] - falls[firstPreamble + j -1];
+	        if(dif > 1.3 * 16 ) // 1.3*16=20.8
+	        { //freq = 3000 -> 2.5*8
+	            if(j == 1 || (firstPreamble + j == secondPreamble))
+	            {
+	                // cout<<"0";
+	                detectedBits.push_back(0);
+	            }
+	            else
+	            {
+	                // cout << "0";
+	                // cout << "/0";
+	                detectedBits.push_back(0);
+	                detectedBits.push_back(0);
+	            }
+	        }
+	        else
+	        {
+	            if((j != 1 && firstPreamble + j != secondPreamble) || addZero == 1)
+	            {
+	                // cout << "0";
+	                detectedBits.push_back(0);
+	            }
+	        }
+	        if (firstPreamble + j == secondPreamble)
+	            break;
 
-			dif = falls[firstPreamble +j] - peaks[firstPreamble + j];
+	        dif = falls[firstPreamble +j] - peaks[firstPreamble + j];
 
-			if(dif > 1.5 * 16 )
-			{ //freq = 3000 -> 2.5*8
-				detectedBits.push_back(1);
-				detectedBits.push_back(1);
-				if(firstPreamble + j +1 == secondPreamble)
-					addZero = 1;
-				cout << "1";
-				cout << "/1";
-			}
-			else
-			{detectedBits.push_back(1);
-				cout<<"1";
-			}
-			j++;
-		}
+	        if(dif > 1.5 * 16 ) // 1.5*16=24
+	        { //freq = 3000 -> 2.5*8
+	            detectedBits.push_back(1);
+	            detectedBits.push_back(1);
+	            if(firstPreamble + j +1 == secondPreamble)
+	                addZero = 1;
+	            // cout << "1";
+	            // cout << "/1";
+	        }
+	        else
+	        {
+	            detectedBits.push_back(1);
+	            // cout<<"1";
+	        }
+	        j++;
+	    }
+	    // cout<<endl;
 	}
 
 	int avoidBlobOffset(Mat input, int centerRadius[3])
