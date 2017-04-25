@@ -12,6 +12,7 @@
 bin/
 gen/
 out/
+obj/
 
 # Gradle files
 .gradle/
@@ -38,3 +39,4 @@ captures/
 
 # Keystore files
 *.jks
+/Default/

@@ -24,9 +24,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.opencv.android.OpenCVLoader;
 
 public class MainCamerAPI extends AppCompatActivity 
 {
@@ -49,10 +52,17 @@ public class MainCamerAPI extends AppCompatActivity
     private Size imageDimension;
     private ImageReader imageReader;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private int blobID;
+    
+    static {
+        if (!OpenCVLoader.initDebug()) {
+        	Log.e(TAG, "Error in intilising OpenCV library");
+        }
+        else
+        	Log.e(TAG, "OpenCV library initialised");
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -162,9 +172,9 @@ public class MainCamerAPI extends AppCompatActivity
             if (characteristics != null) 
             {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-                System.out.println("Available sizes");
-                for(int i=0;i<jpegSizes.length;++i)
-                	System.out.println(jpegSizes[i].getWidth() +","+jpegSizes[i].getHeight());
+                //System.out.println("Available sizes");
+                //for(int i=0;i<jpegSizes.length;++i)
+                	//System.out.println(jpegSizes[i].getWidth() +","+jpegSizes[i].getHeight());
             }
             int width = 640; //Default values
             int height = 480;
@@ -197,22 +207,30 @@ public class MainCamerAPI extends AppCompatActivity
                 @Override
                 public void onImageAvailable(ImageReader reader)
                 {
-                    Image image = null;
-                    try 
-                    {
-                        image = reader.acquireLatestImage();
-                        ProcessImage process = new ProcessImage(image);
-                        blobID = process.processframe();
+                    //Image image = null;
+                	final Image image = reader.acquireLatestImage();
+                    try{
+                        new Thread(new Runnable() 
+                        {
+                            public void run()
+                            {
+                            	ProcessImage process = new ProcessImage(image);
+                                try 
+                                {
+									process.processframe();
+									//System.out.println("Result::"+blobID);
+									//Toast.makeText(MainCamerAPI.this, "Result:"+blobID, Toast.LENGTH_SHORT).show();
+								}
+                                catch (Exception e)
+                                {
+									e.printStackTrace();
+								}
+                            }
+                        }).start();
                     }
                     catch(Exception e){
                     	e.printStackTrace();
-                    }
-                    
-                    finally 
-                    {
-                        if (image != null)
-                            image.close();
-                    }
+                    }                    
                 }
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
@@ -222,7 +240,6 @@ public class MainCamerAPI extends AppCompatActivity
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
                 {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MainCamerAPI.this, "Result:"+blobID, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };
@@ -323,7 +340,6 @@ public class MainCamerAPI extends AppCompatActivity
         }
     }
     
-    @SuppressWarnings("unused")
 	private void closeCamera()
     {
         if (null != cameraDevice) 
@@ -356,6 +372,7 @@ public class MainCamerAPI extends AppCompatActivity
     {
         super.onResume();
         Log.e(TAG, "onResume");
+
         startBackgroundThread();
         if (textureView.isAvailable()) 
         {
@@ -371,7 +388,7 @@ public class MainCamerAPI extends AppCompatActivity
     protected void onPause() 
     {
         Log.e(TAG, "onPause");
-        //closeCamera();
+        closeCamera();
         stopBackgroundThread();
         super.onPause();
     }
