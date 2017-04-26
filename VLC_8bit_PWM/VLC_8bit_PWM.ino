@@ -1,5 +1,8 @@
 const int ledPin = 11;
+const int ledPin2 = 10;
 const int dataLength = 10;
+const int pwmWidth = 3;
+const int silentZone = 2 * pwmWidth;
 
 int counter = 0;
 int dataArray[dataLength];
@@ -14,7 +17,7 @@ void initializeTimer()
   TCCR1B = 0;
   TCNT1  = 0;
 
-  int freq = 1500;
+  int freq = 3000;
   int value = 16000000 / 256 /  freq / 2 ; // timer is 8 bits -> 256 values
 
   OCR1A = value;            // compare match register 16MHz/256/2Hz
@@ -40,9 +43,14 @@ ISR(TIMER1_COMPA_vect)
       digitalWrite(ledPin,ledStatus);
     }
   }
-
+  else if(counter < packetSize+silentZone)
+  {
+    ledStatus = false;
+    digitalWrite(ledPin,ledStatus);
+  }
+  
   counter++;
-  if(counter == packetSize)
+  if(counter == packetSize+silentZone)
     counter = 0;
 }
 
@@ -65,7 +73,7 @@ void setData1()
 
 void setPacket1()
 {
-  packetSize = dataLength * 3;
+  packetSize = dataLength * pwmWidth;
   packet = (int*) malloc(packetSize * sizeof(int));
   int i=0,j=0;
   while(i<dataLength)
@@ -89,9 +97,11 @@ void setPacket1()
 void setup()
 {
     pinMode(ledPin, OUTPUT);
+    pinMode(ledPin2, OUTPUT);
     setData1();
     setPacket1();
     delay(500);
+    digitalWrite(ledPin2,LOW);
     initializeTimer();
 }
 
