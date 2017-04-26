@@ -1,4 +1,4 @@
-# Images using new encoding scheme (OOK with silent zone)
+# Images using new encoding scheme (PWM with silent zone)
 
 - Image1 -> 1 11000110 0
 - Image2 -> 1 01010101 1
