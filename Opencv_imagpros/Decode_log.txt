@@ -1,0 +1,298 @@
+
+
+
+
+			Image :: Images/Image1_1_small.jpg
+Peak::   18	Fall::   34	Diff::   16
+Peak::   38	Fall::   57	Diff::   19
+Peak::   61	Fall::   79	Diff::   18
+Peak::   83	Fall::   94	Diff::   11
+Peak::   99	Fall::  104	Diff::    5
+Peak::  108	Fall::  116	Diff::    8
+Peak::  131	Fall::  138	Diff::    7
+Peak::  154	Fall::  170	Diff::   16
+Peak::  175	Fall::  185	Diff::   10
+Peak::  199	Fall::  208	Diff::    9
+Peak::  222	Fall::  229	Diff::    7
+Peak::  291	Fall::  306	Diff::   15 -- Start bit
+Peak::  312	Fall::  328	Diff::   16
+Peak::  335	Fall::  352	Diff::   17
+Peak::  357	Fall::  367	Diff::   10
+Peak::  416	Fall::  421	Diff::    5
+Peak::  507	Fall::  512	Diff::    5 -- Start bit
+19 , 5 , 12
+1100001000/11100
+
+
+
+
+			Image :: Images/Image1_2_small.jpg
+Peak::   14	Fall::   30	Diff::   16
+Peak::   35	Fall::   53	Diff::   18
+Peak::   57	Fall::   76	Diff::   19
+Peak::   80	Fall::   92	Diff::   12
+Peak::  105	Fall::  113	Diff::    8
+Peak::  128	Fall::  135	Diff::    7
+Peak::  151	Fall::  167	Diff::   16
+Peak::  171	Fall::  181	Diff::   10
+Peak::  196	Fall::  205	Diff::    9
+Peak::  219	Fall::  226	Diff::    7
+Peak::  288	Fall::  302	Diff::   14 -- Start bit
+Peak::  309	Fall::  325	Diff::   16
+Peak::  331	Fall::  349	Diff::   18
+Peak::  353	Fall::  359	Diff::    6
+Peak::  406	Fall::  411	Diff::    5
+Peak::  445	Fall::  450	Diff::    5
+19 , 5 , 12
+110001000/11100
+
+
+
+
+			Image :: Images/Image1_3_small.jpg
+Peak::   15	Fall::   20	Diff::    5
+Peak::  103	Fall::  110	Diff::    7 -- Start bit
+Peak::  162	Fall::  167	Diff::    5
+Peak::  173	Fall::  186	Diff::   13
+Peak::  193	Fall::  210	Diff::   17
+Peak::  215	Fall::  233	Diff::   18
+Peak::  238	Fall::  247	Diff::    9
+Peak::  263	Fall::  269	Diff::    6
+Peak::  286	Fall::  292	Diff::    6
+Peak::  308	Fall::  324	Diff::   16
+Peak::  329	Fall::  338	Diff::    9
+Peak::  354	Fall::  360	Diff::    6
+Peak::  377	Fall::  383	Diff::    6
+Peak::  445	Fall::  460	Diff::   15 -- Start bit
+Peak::  465	Fall::  483	Diff::   18
+Peak::  488	Fall::  506	Diff::   18
+Peak::  511	Fall::  520	Diff::    9
+Peak::  536	Fall::  542	Diff::    6
+Peak::  559	Fall::  565	Diff::    6
+Peak::  581	Fall::  596	Diff::   15
+Peak::  602	Fall::  611	Diff::    9
+Peak::  628	Fall::  632	Diff::    4
+Peak::  650	Fall::  656	Diff::    6
+Peak::  820	Fall::  825	Diff::    5 -- Start bit
+18 , 4 , 11
+/001110001000/1110001000
+
+
+
+
+			Image :: Images/Image2_1_small.jpg
+Peak::  171	Fall::  176	Diff::    5
+Peak::  194	Fall::  200	Diff::    6
+Peak::  214	Fall::  230	Diff::   16
+Peak::  235	Fall::  245	Diff::   10
+Peak::  260	Fall::  276	Diff::   16
+Peak::  281	Fall::  290	Diff::    9
+Peak::  305	Fall::  321	Diff::   16
+Peak::  326	Fall::  336	Diff::   10
+Peak::  351	Fall::  367	Diff::   16
+Peak::  371	Fall::  382	Diff::   11
+Peak::  442	Fall::  458	Diff::   16 -- Start bit
+Peak::  462	Fall::  473	Diff::   11
+Peak::  487	Fall::  504	Diff::   17
+Peak::  507	Fall::  518	Diff::   11
+Peak::  533	Fall::  549	Diff::   16
+Peak::  553	Fall::  564	Diff::   11
+Peak::  578	Fall::  594	Diff::   16
+Peak::  599	Fall::  609	Diff::   10
+Peak::  624	Fall::  640	Diff::   16
+Peak::  644	Fall::  655	Diff::   11
+Peak::  715	Fall::  731	Diff::   16 -- Start bit
+Peak::  736	Fall::  745	Diff::    9
+Peak::  761	Fall::  776	Diff::   15
+Peak::  782	Fall::  790	Diff::    8
+Peak::  806	Fall::  822	Diff::   16
+Peak::  827	Fall::  836	Diff::    9
+Peak::  865	Fall::  870	Diff::    5
+17 , 5 , 11
+010101010/1010101010/101010
+
+
+
+
+			Image :: Images/Image2_2_small.jpg
+Peak::  170	Fall::  175	Diff::    5
+Peak::  230	Fall::  245	Diff::   15 -- Start bit
+Peak::  250	Fall::  260	Diff::   10
+Peak::  275	Fall::  291	Diff::   16
+Peak::  296	Fall::  306	Diff::   10
+Peak::  320	Fall::  337	Diff::   17
+Peak::  341	Fall::  351	Diff::   10
+Peak::  366	Fall::  383	Diff::   17
+Peak::  386	Fall::  397	Diff::   11
+Peak::  411	Fall::  428	Diff::   17
+Peak::  432	Fall::  442	Diff::   10
+Peak::  503	Fall::  519	Diff::   16 -- Start bit
+Peak::  523	Fall::  534	Diff::   11
+Peak::  548	Fall::  564	Diff::   16
+Peak::  568	Fall::  579	Diff::   11
+Peak::  593	Fall::  610	Diff::   17
+Peak::  613	Fall::  625	Diff::   12
+Peak::  639	Fall::  655	Diff::   16
+Peak::  659	Fall::  670	Diff::   11
+Peak::  684	Fall::  701	Diff::   17
+Peak::  705	Fall::  715	Diff::   10
+Peak::  776	Fall::  791	Diff::   15 -- Start bit
+Peak::  797	Fall::  806	Diff::    9
+Peak::  821	Fall::  837	Diff::   16
+Peak::  860	Fall::  865	Diff::    5
+17 , 5 , 11
+/1010101010/1010111010/101
+
+
+
+
+			Image :: Images/Image2_3_small.jpg
+Peak::  170	Fall::  175	Diff::    5
+Peak::  205	Fall::  222	Diff::   17
+Peak::  226	Fall::  236	Diff::   10
+Peak::  251	Fall::  266	Diff::   15
+Peak::  272	Fall::  281	Diff::    9
+Peak::  296	Fall::  312	Diff::   16
+Peak::  317	Fall::  327	Diff::   10
+Peak::  342	Fall::  358	Diff::   16
+Peak::  362	Fall::  373	Diff::   11
+Peak::  433	Fall::  449	Diff::   16 -- Start bit
+Peak::  453	Fall::  464	Diff::   11
+Peak::  478	Fall::  494	Diff::   16
+Peak::  499	Fall::  509	Diff::   10
+Peak::  524	Fall::  540	Diff::   16
+Peak::  544	Fall::  555	Diff::   11
+Peak::  569	Fall::  586	Diff::   17
+Peak::  590	Fall::  600	Diff::   10
+Peak::  615	Fall::  631	Diff::   16
+Peak::  635	Fall::  646	Diff::   11
+Peak::  706	Fall::  722	Diff::   16 -- Start bit
+Peak::  727	Fall::  736	Diff::    9
+Peak::  752	Fall::  767	Diff::   15
+Peak::  772	Fall::  781	Diff::    9
+Peak::  797	Fall::  812	Diff::   15
+Peak::  818	Fall::  827	Diff::    9
+Peak::  862	Fall::  867	Diff::    5
+17 , 5 , 11
+10101010/1010101010/101010
+
+
+
+
+			Image :: Images/Image3_1_small.jpg
+Peak::  141	Fall::  146	Diff::    5
+Peak::  167	Fall::  177	Diff::   10
+Peak::  194	Fall::  198	Diff::    4
+Peak::  218	Fall::  229	Diff::   11
+Peak::  238	Fall::  253	Diff::   15
+Peak::  308	Fall::  321	Diff::   13 -- Start bit
+Peak::  328	Fall::  336	Diff::    8
+Peak::  353	Fall::  367	Diff::   14
+Peak::  373	Fall::  381	Diff::    8
+Peak::  398	Fall::  404	Diff::    6
+Peak::  421	Fall::  435	Diff::   14
+Peak::  442	Fall::  450	Diff::    8
+Peak::  467	Fall::  472	Diff::    5
+Peak::  490	Fall::  504	Diff::   14
+Peak::  510	Fall::  526	Diff::   16
+Peak::  581	Fall::  594	Diff::   13 -- Start bit
+Peak::  602	Fall::  608	Diff::    6
+Peak::  627	Fall::  639	Diff::   12
+Peak::  648	Fall::  653	Diff::    5
+Peak::  673	Fall::  675	Diff::    2
+Peak::  715	Fall::  720	Diff::    5
+16 , 2 , 9
+1011/1010010011/10100
+
+
+
+
+			Image :: Images/Image3_2_small.jpg
+Peak::  140	Fall::  145	Diff::    5
+Peak::  179	Fall::  186	Diff::    7
+Peak::  203	Fall::  216	Diff::   13
+Peak::  224	Fall::  240	Diff::   16
+Peak::  294	Fall::  308	Diff::   14 -- Start bit
+Peak::  314	Fall::  323	Diff::    9
+Peak::  339	Fall::  354	Diff::   15
+Peak::  359	Fall::  368	Diff::    9
+Peak::  384	Fall::  390	Diff::    6
+Peak::  407	Fall::  422	Diff::   15
+Peak::  428	Fall::  437	Diff::    9
+Peak::  453	Fall::  459	Diff::    6
+Peak::  476	Fall::  490	Diff::   14
+Peak::  496	Fall::  513	Diff::   17
+Peak::  567	Fall::  581	Diff::   14 -- Start bit
+Peak::  587	Fall::  595	Diff::    8
+Peak::  612	Fall::  626	Diff::   14
+Peak::  633	Fall::  640	Diff::    7
+Peak::  659	Fall::  662	Diff::    3
+Peak::  681	Fall::  695	Diff::   14
+Peak::  712	Fall::  717	Diff::    5
+17 , 3 , 10
+011/1010010011/101001
+
+
+
+
+			Image :: Images/Image3_3_small.jpg
+Peak::  138	Fall::  143	Diff::    5
+Peak::  161	Fall::  164	Diff::    3
+Peak::  177	Fall::  192	Diff::   15
+Peak::  199	Fall::  207	Diff::    8
+Peak::  224	Fall::  229	Diff::    5
+Peak::  246	Fall::  261	Diff::   15
+Peak::  267	Fall::  275	Diff::    8
+Peak::  291	Fall::  298	Diff::    7
+Peak::  314	Fall::  330	Diff::   16
+Peak::  335	Fall::  352	Diff::   17
+Peak::  406	Fall::  421	Diff::   15 -- Start bit
+Peak::  426	Fall::  435	Diff::    9
+Peak::  451	Fall::  466	Diff::   15
+Peak::  471	Fall::  480	Diff::    9
+Peak::  496	Fall::  502	Diff::    6
+Peak::  519	Fall::  534	Diff::   15
+Peak::  540	Fall::  549	Diff::    9
+Peak::  565	Fall::  570	Diff::    5
+Peak::  588	Fall::  602	Diff::   14
+Peak::  608	Fall::  624	Diff::   16
+Peak::  679	Fall::  685	Diff::    6 -- Start bit
+Peak::  702	Fall::  707	Diff::    5
+17 , 3 , 10
+010010011/1010010011/0
+
+
+
+
+			Image :: Images/Image4_1_small.jpg
+Peak::  152	Fall::  157	Diff::    5
+Peak::  176	Fall::  179	Diff::    3
+Peak::  183	Fall::  193	Diff::   10
+Peak::  209	Fall::  214	Diff::    5
+Peak::  232	Fall::  237	Diff::    5
+Peak::  254	Fall::  269	Diff::   15
+Peak::  323	Fall::  337	Diff::   14 -- Start bit
+Peak::  343	Fall::  360	Diff::   17
+Peak::  366	Fall::  375	Diff::    9
+Peak::  390	Fall::  406	Diff::   16
+Peak::  411	Fall::  420	Diff::    9
+Peak::  436	Fall::  451	Diff::   15
+Peak::  457	Fall::  466	Diff::    9
+Peak::  481	Fall::  488	Diff::    7
+Peak::  504	Fall::  511	Diff::    7
+Peak::  527	Fall::  542	Diff::   15
+Peak::  596	Fall::  610	Diff::   14 -- Start bit
+Peak::  616	Fall::  633	Diff::   17
+Peak::  639	Fall::  647	Diff::    8
+Peak::  664	Fall::  678	Diff::   14
+Peak::  685	Fall::  692	Diff::    7
+Peak::  710	Fall::  723	Diff::   13
+Peak::  730	Fall::  738	Diff::    8
+Peak::  772	Fall::  777	Diff::    5
+17 , 3 , 10
+00001/1101010001/1101010
+
+
+
+
+			Image :: Images/Image4_2_small.jpg
