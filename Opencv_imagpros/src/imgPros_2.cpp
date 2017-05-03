@@ -37,7 +37,7 @@ void image_detection(String path)
     vector<vector<int> > returnMatrix(5, vector<int>(3)); // contains center positions and radii of blobs
 	detector(grey_img, returnMatrix);
 	// cout<<"Circles plotted"<<endl;
-	imwrite(Image_path+"_detector.jpg", grey_img);
+	imwrite(Image_path+"_1detector.jpg", grey_img);
 
 	int centerRadius[3];
 	centerRadius[0] = returnMatrix[0][0];
@@ -45,12 +45,12 @@ void image_detection(String path)
 	centerRadius[2] = ceil(returnMatrix[0][2]*1.5);
 
 	Mat adaptive_equalized = clahe(grey_img);
-	imwrite(Image_path+"_adaptive_equalized.jpg", adaptive_equalized);
+	imwrite(Image_path+"_2adaptive_equalized.jpg", adaptive_equalized);
 	// cout<<"adaptive equalisation completed"<<endl;
 
 	Mat blurred;
 	blur(adaptive_equalized, blurred, Size(1, 2));
-	imwrite(Image_path+"_blurred.jpg", blurred);
+	imwrite(Image_path+"_3blurred.jpg", blurred);
 	// cout<<"blur completed"<<endl;
 	
 	adaptive_equalized.release();
@@ -59,17 +59,17 @@ void image_detection(String path)
 	threshold( grey_img, adaptive_threshold, 80,255,THRESH_BINARY );
 
 	// cout<<"adaptive threshold completed"<<endl;
-	imwrite(Image_path+"_adaptive_threshold.jpg", adaptive_threshold);
+	imwrite(Image_path+"_4adaptive_threshold.jpg", adaptive_threshold);
 
 	int offset = avoidBlobOffset(adaptive_threshold, centerRadius);
 	// cout<<"offset calculated"<<endl;
 	
 	vector<int> correctedPixels;
 	getCorrectedPixelsOffset(adaptive_threshold, centerRadius, offset, correctedPixels);
-	imwrite(Image_path+"_line.jpg", correctedPixels);
+	imwrite(Image_path+"_5line.jpg", correctedPixels);
 
-	vector<int> detectedBits;
-	decodeBits_encoding2(correctedPixels, detectedBits);
+	// vector<int> detectedBits;
+	// decodeBits_encoding2(correctedPixels, detectedBits);
 }
 
 int main( int argc, char** argv )
@@ -80,12 +80,13 @@ int main( int argc, char** argv )
     {
         for(int j=1;j<=3;++j)
         {
-            Image_path = "Images/Image";
+            Image_path = "Images_encoding1/Image";
             Image_path += patch::to_string(i);
             Image_path += "_";
             Image_path += patch::to_string(j);
             Image_path += "_small.jpg";
-            cout<<"\n\n\n\n\t\t\tImage :: "<<Image_path<<endl;
+            // cout<<"\n\n\n\n\t\t\tImage :: "<<Image_path<<endl;
+            cout<<"Image :: "<<Image_path<<endl;
             image_detection(Image_path);
         }
     }
