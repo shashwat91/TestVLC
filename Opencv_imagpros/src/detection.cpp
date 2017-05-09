@@ -12,20 +12,24 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
   blur(input, blurred_image, Size(100, 100));
 
   Mat otsu;
-  threshold(blurred_image, otsu, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+  threshold(blurred_image, otsu, 0, 255,  CV_THRESH_OTSU);
 
-  Mat cimg = input;
+  // Mat cimg = otsu;
+  // Mat clone = input.clone();
 
   vector<vector<Point> > contours;
-  vector<Point2i> center;
-  vector<int> radius;
+  // vector<Point2i> center;
+  // vector<int> radius;
 
-  findContours(otsu.clone(), contours, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
+  // 	Original method by using contors.
+  // void findContours(InputOutputArray image, OutputArrayOfArrays contours, int mode, int method, Point offset=Point())
+/*  findContours(cimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+	Scalar red(255,0,0);
+	drawContours( clone, contours, -1, red,5); //--Drawing detected contors
+	size_t count = contours.size();
 
-  size_t count = contours.size();
-
-  for( size_t i=0; i < count; i++)
-  {
+	for( size_t i=0; i < count; i++)
+	{
 	  Point2f c;
 	  float r;
 	  minEnclosingCircle( contours[i], c, r);
@@ -35,19 +39,88 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
 		  center.push_back(c);
 		  radius.push_back(r);
 	  }
-  }
-  int count2 = center.size();
-  cv::Scalar red(255,255,255);
+	}
+	int count2 = center.size();
 
-  returnMatrix.resize(count2);
 
-  for( int i = 0; i < count2; i++)
-  {
-	  circle(input, center[i], radius[i], red, 3);
-	  returnMatrix[i][0] = center[i].x;
-	  returnMatrix[i][1] = center[i].y;
-	  returnMatrix[i][2] = radius[i];
-  }
+	returnMatrix.resize(count2);
+
+	for( int i = 0; i < count2; i++)
+	{
+	circle(input, center[i], radius[i],red, 5);
+
+	returnMatrix[i][0] = center[i].x;
+	returnMatrix[i][1] = center[i].y;
+	returnMatrix[i][2] = radius[i];
+	}*/
+
+
+  //	Try-1 using find circular grids
+  // bool findCirclesGrid(InputArray image, Size patternSize, OutputArray centers, int flags=CALIB_CB_SYMMETRIC_GRID, const Ptr<FeatureDetector>& blobDetector=new SimpleBlobDetector() )
+/*  Size patternsize(1,1);
+	vector<Point2f> centers;
+	cout<<findCirclesGrid(input, patternsize, centers )<<"	"<<centers.size()<<endl;
+*/
+
+  //	Try-2 using hough circles
+  // void HoughCircles(InputArray image, OutputArray circles, int method, double dp, double minDist, double param1=100, double param2=100, int minRadius=0, int maxRadius=0 )
+/*	vector<Vec3f> circles;
+	GaussianBlur( clone, clone, cv::Size(9, 9), 2, 2 );
+	HoughCircles(clone, circles, CV_HOUGH_GRADIENT, 2, 100, 100, 100, 1, clone.rows/2 );
+	cout<<"no of hough circles::"<<circles.size()<<endl;
+	// Plotting circles detected by HoughCircles functions.
+	std::vector<cv::Vec3f>::const_iterator itc= circles.begin();
+	while (itc!=circles.end())
+	{
+
+	cv::circle(clone, Point((*itc)[0], (*itc)[1]),	(*itc)[2],	Scalar(255,0,0),	2);
+	++itc;
+	}
+*/
+
+  //	Try-3 using curve approximation
+  // void approxPolyDP(InputArray curve, OutputArray approxCurve, double epsilon, bool closed)
+/*  vector<vector<Point> > points;
+	points.resize(contours.size());
+	Scalar red(255,0,0);
+	for(int i=0; i<contours.size(); ++i)
+	{
+		approxPolyDP(Mat(contours[i]), points[i], 50, true);
+		cout<<"curve ["<<i+1<<"] = "<<points[i].size()<<endl;
+	}
+	drawContours( clone, points, -1, red,5);
+*/
+
+  //	Working Method to detect circles
+	findContours(otsu, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+	Scalar red(255,0,0);
+	size_t count = contours.size();
+	float rMax=0;
+    Point2f cAvg;
+    cAvg.x=0;cAvg.y=0;
+
+	for( size_t i=0; i < count; i++)
+	{
+		Point2f c;
+		float r;
+		minEnclosingCircle( contours[i], c, r);
+		cAvg.x +=c.x;
+		cAvg.y +=c.y;
+		if(r>rMax)
+			rMax = r;
+	}
+
+	if(count!=0)
+    {
+        cAvg.x = cAvg.x/count;
+        cAvg.y = cAvg.y/count;
+		circle(input, cAvg, rMax,red, 5);
+		returnMatrix.resize(1);
+		returnMatrix[0][0] = cAvg.x;
+		returnMatrix[0][1] = cAvg.y;
+		returnMatrix[0][2] = rMax;
+	}
+
 }
   
 Mat clahe(Mat input)
@@ -278,28 +351,28 @@ void decodeBits_encoding2(vector<int>& inputPixels, vector<int>& detectedBits)
 	for(unsigned int i=1; i<peaks.size(); ++i)
 	{
 		dif = peaks[i] - falls[i-1];
-		cout<<peaks[i]<<" , "<<falls[i-1]<<" :: "<<dif;
+		// cout<<peaks[i]<<" , "<<falls[i-1]<<" :: "<<dif;
 		if(dif > 3*max_peak)
 		{
 			nPackets.push_back(i);
-			cout<<"		--- StartBit";
+			// cout<<"		--- StartBit";
 		}
-		cout<<endl;
+		// cout<<endl;
 	}
 	
 	// To print all rising and falling edges with difference.
-	int j=0;
-	for(unsigned int i=0; i<peaks.size(); ++i)
-	{
-		cout<<"Peak:: "<<setw(4)<<peaks[i]<<"\tFall:: "<<setw(4)<<falls[i]<<"\tDiff:: "<<setw(4)<<diff[i];
-		if(peaks[i] == peaks[nPackets[j]])
-		{
-			cout<<" -- Start bit";
-			j++;
-		}
-		cout<<endl;
-	}
-	cout<<max_peak<<" , "<<min_peak<<" , "<<th_peak<<endl;
+	// int j=0;
+	// for(unsigned int i=0; i<peaks.size(); ++i)
+	// {
+	// 	cout<<"Peak:: "<<setw(4)<<peaks[i]<<"\tFall:: "<<setw(4)<<falls[i]<<"\tDiff:: "<<setw(4)<<diff[i];
+	// 	if(peaks[i] == peaks[nPackets[j]])
+	// 	{
+	// 		cout<<" -- Start bit";
+	// 		j++;
+	// 	}
+	// 	cout<<endl;
+	// }
+	// cout<<max_peak<<" , "<<min_peak<<" , "<<th_peak<<endl;
 
 	//Decoding bits from rising and falling edges
 	for(unsigned i=1; i<peaks.size()-1; ++i)
