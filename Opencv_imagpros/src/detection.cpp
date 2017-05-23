@@ -14,31 +14,30 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
   Mat otsu;
   threshold(blurred_image, otsu, 0, 255,  CV_THRESH_OTSU);
 
-  // Mat cimg = otsu;
-  // Mat clone = input.clone();
-
   vector<vector<Point> > contours;
-  // vector<Point2i> center;
-  // vector<int> radius;
 
   // 	Original method by using contors.
   // void findContours(InputOutputArray image, OutputArrayOfArrays contours, int mode, int method, Point offset=Point())
-/*  findContours(cimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+	/*Mat cimg = otsu;
+	Mat clone = input.clone();
+	vector<Point2i> center;
+	vector<int> radius;
+	findContours(cimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 	Scalar red(255,0,0);
 	drawContours( clone, contours, -1, red,5); //--Drawing detected contors
 	size_t count = contours.size();
 
 	for( size_t i=0; i < count; i++)
 	{
-	  Point2f c;
-	  float r;
-	  minEnclosingCircle( contours[i], c, r);
+		Point2f c;
+		float r;
+		minEnclosingCircle( contours[i], c, r);
 
-	  if (r >= 50)
-	  {
-		  center.push_back(c);
-		  radius.push_back(r);
-	  }
+		if (r >= 50)
+		{
+			center.push_back(c);
+			radius.push_back(r);
+		}
 	}
 	int count2 = center.size();
 
@@ -91,19 +90,20 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
 	drawContours( clone, points, -1, red,5);
 */
 
-  //	Working Method to detect circles
-	findContours(otsu, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  //	Working Method to detect circles using average of centers
+	/*findContours(otsu, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 	Scalar red(255,0,0);
 	size_t count = contours.size();
 	float rMax=0;
-    Point2f cAvg;
-    cAvg.x=0;cAvg.y=0;
+	Point2f cAvg;
+	cAvg.x=0;cAvg.y=0;
 
 	for( size_t i=0; i < count; i++)
 	{
 		Point2f c;
 		float r;
 		minEnclosingCircle( contours[i], c, r);
+		cout<<"circle i :: "<<c.x<<" , "<<c.y<<" - "<<r<<endl;
 		cAvg.x +=c.x;
 		cAvg.y +=c.y;
 		if(r>rMax)
@@ -111,15 +111,59 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
 	}
 
 	if(count!=0)
-    {
-        cAvg.x = cAvg.x/count;
-        cAvg.y = cAvg.y/count;
+	{
+		cAvg.x = cAvg.x/count;
+		cAvg.y = cAvg.y/count;
+		cout<<"Average circle :: "<<cAvg.x<<" , "<<cAvg.y<<endl;
 		circle(input, cAvg, rMax,red, 5);
 		returnMatrix.resize(1);
 		returnMatrix[0][0] = cAvg.x;
 		returnMatrix[0][1] = cAvg.y;
 		returnMatrix[0][2] = rMax;
+	}*/
+
+  //	New method of detection of circle using weighted avg of countors
+	findContours(otsu, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+	Scalar red(255,0,0);
+	size_t count = contours.size();
+	vector<Moments> mu(count);
+	vector<Point2f> mc(count);
+	unsigned long totalArea=0;
+	Point2f center;
+	int rMax=0;
+	float r;
+	
+
+	for( size_t i=0; i < count; i++)
+	{
+		minEnclosingCircle( contours[i], center, r);
+		if(r > rMax)
+			rMax=r;
+		mu[i] = moments( contours[i], false );
+		if(mu[i].m00 == 0)
+			continue;
+		mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 );
+		// cout<<"mass center countour "<<i+1<<" : "<<mc[i]<<"  , area :: "<<mu[i].m00<<endl;
+		totalArea+=mu[i].m00;
 	}
+	center.x=0; center.y=0;
+	for(size_t i=0; i < count; ++i)
+	{
+		float per = mu[i].m00 / totalArea;
+		// cout<<i+1<<"  = "<<per<<endl;
+		center.x += mc[i].x * per;
+		center.y += mc[i].y * per;
+	}
+	cout<<"center :: "<<center<<endl;
+
+	if(count!=0)
+	{
+		circle(input, center, rMax,red, 5);
+		returnMatrix.resize(1);
+		returnMatrix[0][0] = center.x;
+		returnMatrix[0][1] = center.y;
+		returnMatrix[0][2] = rMax;
+	}  
 
 }
   
