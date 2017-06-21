@@ -38,11 +38,13 @@ int main( int argc, char** argv )
     waitKey(0);
     */
 
+    // transpose(grey_img, grey_img);
+    // flip(grey_img, grey_img,1);
     	//--Original detection method
     vector<vector<int> > returnMatrix(5, vector<int>(3)); // contains center positions and radii of blobs
 	detector(grey_img, returnMatrix);
 	cout<<"Circles plotted"<<endl;
-	imwrite(Image_path+"detector_image.jpg", grey_img);
+	imwrite(Image_path+"1_detector_image.jpg", grey_img);
 
 	int centerRadius[3];
 	centerRadius[0] = returnMatrix[0][0];
@@ -50,44 +52,46 @@ int main( int argc, char** argv )
 	centerRadius[2] = ceil(returnMatrix[0][2]*1.5);
 
 	Mat adaptive_equalized = clahe(grey_img);
-	imwrite(Image_path+"adaptive_equalized.jpg", adaptive_equalized);
+	imwrite(Image_path+"2_adaptive_equalized.jpg", adaptive_equalized);
 	cout<<"adaptive equalisation completed"<<endl;
 
 	Mat blurred;
 	blur(adaptive_equalized, blurred, Size(1, 2));
-	imwrite(Image_path+"blurred.jpg", blurred);
+	imwrite(Image_path+"3_blurred.jpg", blurred);
 	cout<<"blur completed"<<endl;
 	
 	adaptive_equalized.release();
-	//Mat adaptive_threshold = adaptiveThreshold(blurred);
+	Mat adaptive_threshold2 = adaptiveThreshold(blurred);
 	Mat adaptive_threshold;
-	threshold( grey_img, adaptive_threshold, 80,255,THRESH_BINARY );
+	threshold( grey_img, adaptive_threshold, 65,255,THRESH_BINARY );
 
 	cout<<"adaptive threshold completed"<<endl;
-	imwrite(Image_path+"adaptive_threshold_image.jpg", adaptive_threshold);
+	imwrite(Image_path+"4_threshold_image.jpg", adaptive_threshold);
+	imwrite(Image_path+"4_adaptive_threshold_image.jpg", adaptive_threshold2);
 
-	int offset = avoidBlobOffset(adaptive_threshold, centerRadius);
+	int offset = avoidBlobOffset(adaptive_threshold2, centerRadius);
 	cout<<"offset calculated"<<endl;
 	
 	vector<int> correctedPixels;
 	getCorrectedPixelsOffset(adaptive_threshold, centerRadius, offset, correctedPixels);
-	imwrite(Image_path+"line_image.jpg", correctedPixels);
+	cout<<"Pixels corrected\n";
+	imwrite(Image_path+"5_line_image.jpg", correctedPixels);
 
 	vector<int> detectedBits;
-	decodeBits_encoding2(correctedPixels, detectedBits);
+	decodeBits_MAE(correctedPixels, detectedBits);
 
 	// vector<int> detectedBits;
 	// decodeBits(correctedPixels, detectedBits);
-	// if(detectedBits.size() == 0)
-	// {
-	//     cout<<"Image not decoded properly"<<endl;
-	// }
-	// else
-	// {
-	// 	cout<<"Bits decoded"<<endl;
-	// 	for(int i=0; i<detectedBits.size(); i++)
-	//   		cout<<detectedBits[i]<<endl;
-	// }
+	if(detectedBits.size() == 0)
+	{
+	    cout<<"Image not decoded properly"<<endl;
+	}
+	else
+	{
+		cout<<"Bits decoded"<<endl;
+		for(int i=0; i<detectedBits.size(); i++)
+	  		cout<<std::hex<<detectedBits[i]<<endl;
+	}
 
     return 0;
 }

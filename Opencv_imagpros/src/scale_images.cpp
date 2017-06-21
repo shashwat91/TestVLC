@@ -22,13 +22,16 @@ void process_image(string path)
 {
     Mat image, small;
 
-    image = imread( path, 0);
+    image = imread( path, IMREAD_GRAYSCALE );
     if ( !image.data )
     {
         cout<<"No image data\n";
         return;
     }
     path.erase(path.find('.'));
+
+    // transpose(image, image);
+    // flip(image, image,1);
 
     Size size(1920,1080);
     resize(image,small,size);
@@ -39,14 +42,14 @@ int main( int argc, char** argv )
 {
     String Image_path;
 
-    for(int i=1;i<=4;++i)
+    for(int i=1;i<=1;++i)
     {
-        for(int j=1;j<=3;++j)
+        for(int j=1;j<=20;j+=1)
         {
-            Image_path = "Images_encoding1/Image";
-            Image_path += patch::to_string(i);
-            Image_path += "_";
+            Image_path = "40-60_images/";
             Image_path += patch::to_string(j);
+            //Image_path += "_";
+            //Image_path += patch::to_string(i);
             Image_path += ".jpg";
             cout<<"Image :: "<<Image_path<<endl;
             process_image(Image_path);

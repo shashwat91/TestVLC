@@ -2,9 +2,91 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 using namespace cv;
 using namespace std;
+
+unsigned parity(unsigned x)
+{
+   unsigned y;
+   y = x ^ (x >> 1);
+   y = y ^ (y >> 2);
+   y = y ^ (y >> 4);
+   y = y ^ (y >> 8);
+   y = y ^ (y >>16);
+   return y & 1;
+}
+
+void processPacketPWM2(vector<vector<int> > dBits, vector<int>& detectedBits)
+{
+	int dataNumber = 0;
+	int data;
+	detectedBits.resize(dBits.size());
+	for(unsigned i=0; i<dBits.size(); i++)
+	{
+		data = 0;
+		if(dBits[i].size() < 9)
+			continue;
+		for(unsigned j=0; j<dBits[i].size()-1; ++j)
+		{
+			data += dBits[i][j] << (7-j);
+		}
+		if(parity(data) == dBits[i][8])
+		{
+			detectedBits[dataNumber] = data;
+			dataNumber++;
+			// cout<<"Parity passed for data :: "<<std::hex<<detectedBits[dataNumber-1]<<endl;
+		}
+		// else
+		// 	cout<<"Parity failed for data :: "<<std::hex<<detectedBits[dataNumber-1]<<endl;
+	}
+	detectedBits.resize(dataNumber);
+}
+
+bool processPacketMAE(vector<int> bits)
+{
+	if(bits.size() < 19)
+		return false;
+
+	unsigned hex=0x00;
+	unsigned par;
+	unsigned i;
+	// cout<<endl;
+	for(i=1; i<17; i+=2)
+	{
+		if(bits[i] == 1 && bits[i+1] == 0)
+		{
+			hex += 0 << (((17-i)/2) -1);
+			// cout<<" 0 ";
+		}
+		else if(bits[i] == 0 && bits[i+1] == 1)
+		{
+			hex += 1 << (((17-i)/2) -1);
+			// cout<<" 1 ";
+		}
+		else
+			return false;
+		// cout<<"  "<<hex;
+	}
+
+	if(bits[i] == 1 && bits[i+1] == 0)
+	{
+		par = 0;
+	}
+	else if(bits[i] == 0 && bits[i+1] == 1)
+	{
+		par = 1;
+	}
+	else
+		return false;
+
+	cout<<"  "<<std::hex<<hex;//<<"  "<<parity(hex)<<"  "<<par<<"  ";
+	if(par == parity(hex))
+		return true;
+	else
+		return false;
+}
 
 void detector(Mat input, vector< vector<int> > &returnMatrix)
 {
@@ -154,11 +236,12 @@ void detector(Mat input, vector< vector<int> > &returnMatrix)
 		center.x += mc[i].x * per;
 		center.y += mc[i].y * per;
 	}
-	cout<<"center :: "<<center<<endl;
+	// cout<<"center :: "<<center<<endl;
 
 	if(count!=0)
 	{
-		circle(input, center, rMax,red, 5);
+		cout<<"circle radius :: "<<rMax<<endl;
+		circle(input, center, rMax,red, 1);
 		returnMatrix.resize(1);
 		returnMatrix[0][0] = center.x;
 		returnMatrix[0][1] = center.y;
@@ -385,26 +468,39 @@ void decodeBits_encoding2(vector<int>& inputPixels, vector<int>& detectedBits)
 				min_peak = dif;
 			diff.push_back(dif); //May not be needed
 		}
+
 	}
+
+	int startbit = (15*max_peak)/10 - 1;
 	th_peak = (max_peak + min_peak)/2;
+
+	/*
+	cout<<"max peak :: "<<max_peak<<endl;
+
+	// cout<<"peaks and falls detected\n";
+	// cout<<"number of peaks :: "<<peaks.size()<<", number of falls :: "<<falls.size()<<endl;
 	//Removing last rising edge or half bit
 	if(peaks.size() > falls.size())
 		peaks.pop_back();
+	*/
+
 	//Deceting  silent zone or startbit of new packet
 	vector<int> nPackets;
 	for(unsigned int i=1; i<peaks.size(); ++i)
 	{
 		dif = peaks[i] - falls[i-1];
 		// cout<<peaks[i]<<" , "<<falls[i-1]<<" :: "<<dif;
-		if(dif > 3*max_peak)
+		if(dif > ((15*max_peak)/10))
 		{
 			nPackets.push_back(i);
 			// cout<<"		--- StartBit";
 		}
 		// cout<<endl;
 	}
+	// cout<<"start bits detected\n";
+
 	
-	// To print all rising and falling edges with difference.
+	// // To print all rising and falling edges with difference.
 	// int j=0;
 	// for(unsigned int i=0; i<peaks.size(); ++i)
 	// {
@@ -417,17 +513,201 @@ void decodeBits_encoding2(vector<int>& inputPixels, vector<int>& detectedBits)
 	// 	cout<<endl;
 	// }
 	// cout<<max_peak<<" , "<<min_peak<<" , "<<th_peak<<endl;
+	
 
+	int bit_count = 0;
+	int packetNumber = -1;
+	vector<vector<int> > dBits;
+	dBits.resize(nPackets.size());
 	//Decoding bits from rising and falling edges
 	for(unsigned i=1; i<peaks.size()-1; ++i)
 	{
-		if((peaks[i] - falls[i-1]) > (3*max_peak))
-			cout<<"/";
+		if(bit_count > 10)
+			return;
 
-		if(diff[i] > th_peak)
-			cout<<"1";
-		else//(diff[i] <= th_peak)
-			cout<<"0";
+		if((peaks[i] - falls[i-1]) > startbit)
+		{
+			packetNumber ++;
+			bit_count=0;
+		}
+
+		if(packetNumber > -1)
+		{
+			if(diff[i] >= th_peak)
+			{
+				// cout<<"1";
+				dBits[packetNumber].push_back(1);
+				bit_count++;
+			}
+			else
+			{
+				// cout<<"0";
+				dBits[packetNumber].push_back(0);
+				bit_count++;
+			}
+		}
 	}
 	cout<<endl;
+
+	// //Printing decoded bits
+	// for(unsigned i=0; i< dBits.size(); ++i)
+	// {
+	// 	for (int j = 0; j < dBits[i].size(); ++j)
+	// 		cout<<dBits[i][j]<<" ";
+	// 	cout<<endl;
+	// }
+
+	//Converting bit stream to hex data
+	processPacketPWM2(dBits, detectedBits);
+}
+
+void decodeBits_MAE(vector<int>& inputPixels, vector<int>& detectedBits)
+{
+	vector<int> peaks;
+	vector<int> falls;
+	vector<int> diff;
+	int max_peak = 0;
+	int min_peak = inputPixels.size();
+	int th_peak;
+	int dif;
+	int startbit;
+
+	//Deceting rising and falling edges of data
+	for (unsigned int i = 0; i < inputPixels.size()-0; i++)
+	{
+		if(inputPixels[i] == 0 && inputPixels[i+1] == 255)
+		{
+			peaks.push_back(i);
+		}
+		else if(inputPixels[i] == 255 && inputPixels[i+1] == 0 && peaks.size() !=0)
+		{
+			falls.push_back(i);
+			dif = falls.back()-peaks.back();
+			if(dif >5)
+			{
+				if(max_peak < dif)
+					max_peak = dif;
+				if(min_peak > dif)
+					min_peak = dif;
+			}
+			diff.push_back(dif); //May not be needed
+		}
+	}
+
+	//Removing last rising edge or half bit
+	if(peaks.size() > falls.size())
+		peaks.pop_back();
+
+	startbit = (13*max_peak)/10;
+	th_peak = (max_peak + min_peak)/2;
+
+	cout<<max_peak<<" , "<<min_peak<<" , "<<th_peak<<" , "<<startbit<<endl;
+	// To detect and print start bit
+	vector<int> nPackets;
+	for(unsigned int i=1; i<peaks.size(); ++i)
+	{
+		dif = peaks[i] - falls[i-1];
+		// cout<<peaks[i]<<" , "<<falls[i-1]<<" :: "<<dif;
+		if(dif > startbit )
+		{
+			nPackets.push_back(i);
+			// cout<<"		--- StartBit";
+		}
+		// cout<<endl;
+	}
+	// cout<<"number of start of packets :: "<<nPackets.size()<<endl;
+
+
+	// // To print all rising and falling edges with difference.
+	// int j=0;
+	// for(unsigned int i=0; i<peaks.size(); ++i)
+	// {
+	// 	// cout<<"Peak:: "<<setw(4)<<peaks[i]<<"\tFall:: "<<setw(4)<<falls[i]<<"\tDiff:: "<<setw(4)<<diff[i];
+	// 	if(peaks[i] == peaks[nPackets[j]])
+	// 	{
+	// 		// cout<<" -- Start bit";
+	// 		j++;
+	// 	}
+	// 	// cout<<endl;
+	// }
+	// cout<<max_peak<<" , "<<min_peak<<" , "<<th_peak<<endl;
+
+	// To save peaks and falls in a file for constructing the waveform
+	// ofstream file;
+	// file.open("edges.csv");
+	// for(unsigned i=0; i< peaks.size(); ++i)
+	// {
+	// 	file<<peaks[i]<<"\n"<<falls[i]<<"\n";
+	// }
+	// file.close();
+
+	//Decoding bits from rising and falling edges
+	int bit_count = 0;
+	int packetNumber = -1;
+	vector<vector<int> > dBits;
+	dBits.resize(nPackets.size());
+	for(unsigned i=1; i<peaks.size()-1; ++i)
+	{
+		if(bit_count > 20)
+			return;
+
+		if((peaks[i] - falls[i-1]) > startbit)
+		{
+			packetNumber ++;
+			// dBits[packetNumber].resize(20);
+			if(bit_count == 6)
+				dBits[packetNumber].push_back(0);
+			// 	cout<<" 0 \t\t --- 0 added";
+			// cout<<"\n";
+			bit_count=0;
+		}
+
+		if(packetNumber > -1)
+		{
+			dif = falls[i] - peaks[i];
+			if(dif > th_peak)
+			{
+				// cout<<" 1 1 ";
+				bit_count+=2;
+				dBits[packetNumber].push_back(1);
+				dBits[packetNumber].push_back(1);
+			}
+			else
+			{
+				// cout<<" 1 ";
+				bit_count++;
+				dBits[packetNumber].push_back(1);
+			}
+			// cout<<dif<<"\t";
+
+			dif = peaks[i+1] - falls[i];
+			if(dif > (th_peak+1) && dif < startbit)
+			{
+				// cout<<" 0 0 ";
+				bit_count+=2;
+				dBits[packetNumber].push_back(0);
+				dBits[packetNumber].push_back(0);
+			}
+			else if(dif <= th_peak+1 )
+			{
+				// cout<<" 0 ";
+				bit_count++;
+				dBits[packetNumber].push_back(0);
+			}
+			// cout<<dif<<"\n";	
+		}	
+	}
+	// cout<<endl;
+
+	// Printing and validating packets received
+	for(unsigned i = 0; i< dBits.size()-1; ++i)
+	{
+		// for (int j = 0; j <= dBits[i].size(); ++j)
+			// cout<<dBits[i][j]<<" ";
+		// if(processPacketMAE(dBits[i]))
+		// 	cout<<"  ---  correct";
+		// else
+		// 	cout<<"  ---  incorrect";
+		// cout<<endl;
+	}
 }

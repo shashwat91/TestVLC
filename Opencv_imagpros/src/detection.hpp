@@ -10,12 +10,14 @@ Mat clahe(Mat input);
 
 Mat adaptiveThreshold(Mat input);
 
-void decodeBits(vector<int>& inputPixels, vector<int>& detectedBits);
-
 int avoidBlobOffset(Mat input, int centerRadius[3]);
 
 void getCorrectedPixelsOffset(Mat input, int centerRadius[3], int offset, vector<int>& correctPixels );
 
+void decodeBits(vector<int>& inputPixels, vector<int>& detectedBits);
+
 void decodeBits_encoding1();
 
 void decodeBits_encoding2(vector<int>& inputPixels, vector<int>& detectedBits);
+
+void decodeBits_MAE(vector<int>& inputPixels, vector<int>& detectedBits);
