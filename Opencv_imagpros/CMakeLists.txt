@@ -18,3 +18,6 @@ target_link_libraries( scale_images ${OpenCV_LIBS} )
 # Video Processing
 add_executable( video_cv src/video_cv.cpp src/detection.cpp)
 target_link_libraries( video_cv ${OpenCV_LIBS} )
+# Circle detection
+add_executable( circle src/circles.cpp)
+target_link_libraries( circle ${OpenCV_LIBS} )
