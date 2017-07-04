@@ -1,6 +1,6 @@
 close all;
 clear;
-img = imread('2_circle.jpg');
+img = imread('../Opencv_imagpros/data_images/4/4_1_small_circle.jpg');
 [r,c] = size(img);
 values = img(:,floor(c/2));
 [val1,pos2] = max(values);
@@ -8,6 +8,7 @@ values = img(:,floor(c/2));
 avgVal1 = floor((val1+val2) / 2) %avg by max and min;
 avgVal2 = floor(mean(values)) %overall average of image
 
+%% Calculating th based on both threshold values
 thValues1 = zeros(1,r);
 thValues2 = zeros(1,r);
 for i=1:(r)
