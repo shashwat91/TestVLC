@@ -1,5 +1,5 @@
-const int freq_on = 1000;
-const int freq_off = 666;
+const int freq_on = 3000;
+const int freq_off = 2000;
 int value_on = 16000000 / 256 /  freq_on / 2;
 int value_off = 16000000 / 256 /  freq_off / 2;
 const int value[2] = {value_off,value_on};
@@ -8,12 +8,12 @@ const int ledPin1 = 5;
 const int ledPin2 = 10;
 const int pwmWidth = 2;
 
-byte data1[10] = {0x31, 0x82, 0x13, 0xE4, 0x75,
-                  0x66, 0x27, 0xA8, 0x49, 0xDA};
+byte data1[10] = {0x1, 0x2, 0x3, 0x4, 0x5,
+                  0x6, 0x7, 0x8, 0x9, 0xA};
 unsigned dataNumber = 7;
 
-int counter1 = 0;
-const int packet1Size = 23;
+int counter1 = 4;
+const int packet1Size = 10;
 bool led1Status = false;
 byte packet1[packet1Size];
 
@@ -71,33 +71,28 @@ byte parity(byte x)
    y = y ^ (y >> 2);
    y = y ^ (y >> 4);
    y = y ^ (y >> 8);
-   y = y ^ (y >>16);
+   //y = y ^ (y >>16);
    return y & 1;
 }
 
 void makePacket1()
 {
   int i=0,j=0;
-  while(i<8)
+  while(i<3)
   {
-    if(j==0)
-    {
-      packet1[j++] = 1; // 1st bit of start of packet
-      continue;
-    }
-    if(j<4)   // --2nd,3rd and 4th bits of start of packet
+    if(j<3)   // --first 3 bits of start of packet
     {
       packet1[j++] = 0;
       continue;
     }
 
-    if(j==4)    // 5th bit start
+    if(j==3)    // 4th bit start
     {
       packet1[j++] = 1;
       continue;
     }
     
-    byte tmp = (data1[dataNumber]) & (0x80>>i);
+    byte tmp = (data1[dataNumber]) & (0x04>>i);
     if(tmp == 0)  // -- bits for symbol 0
     {
       packet1[j++] = 1; //part 1 of data
@@ -109,19 +104,6 @@ void makePacket1()
       packet1[j++] = 0; //part 1 of data
       packet1[j++] = 1; //part 2 of data
       i++;
-    }
-    if(i==8)
-    {
-      if(parity(data1[dataNumber]))
-      {
-        packet1[j++] = 0; //part 1 of parity
-        packet1[j++] = 1; //part 2 of parity
-      }
-      else
-      {
-        packet1[j++] = 1; //part 1 of parity
-        packet1[j++] = 0; //part 2 of parity
-      }
     }
   }
 //  printPacket();
@@ -145,9 +127,9 @@ void setup()
 {
   makePacket1();
   pinMode(ledPin1, OUTPUT);
-//  Serial.begin(115200);
+  Serial.begin(115200);
   delay(5000);
-//  printPacket();
+  printPacket();
   initializeTimer();
 }
 
