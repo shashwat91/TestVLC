@@ -74,9 +74,9 @@ void saveCircle(Mat input, vector< vector<int> > returnMatrix, String Image_path
 	Image_path += "_circle.jpg";
 	Rect roi;
 	roi.x = returnMatrix[0][0] - returnMatrix[0][2];
-	roi.y = returnMatrix[0][1] - returnMatrix[0][2];
+	roi.y = returnMatrix[0][1] - returnMatrix[0][2] + 40;
 	roi.width = 2*returnMatrix[0][2];
-	roi.height = 2*returnMatrix[0][2];
+	roi.height = 2*returnMatrix[0][2] - 70;
 
 	// Scalar red(255,0,0);
 	// rectangle(input, roi, red, 1);

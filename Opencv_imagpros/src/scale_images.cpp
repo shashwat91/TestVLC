@@ -42,14 +42,16 @@ int main( int argc, char** argv )
 {
     String Image_path;
 
-    for(int i=1;i<=1;++i)
+    for(int i=0; i<=0; ++i)
     {
-        for(int j=1;j<=20;j+=1)
+        for(int j=1; j<=55; ++j)
         {
-            Image_path = "40-60_images/";
+            Image_path = "data_images/";
+            Image_path += patch::to_string(i);
+            Image_path += "/";
+            Image_path += patch::to_string(i);
+            Image_path += "_";
             Image_path += patch::to_string(j);
-            //Image_path += "_";
-            //Image_path += patch::to_string(i);
             Image_path += ".jpg";
             cout<<"Image :: "<<Image_path<<endl;
             process_image(Image_path);
