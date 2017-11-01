@@ -1,7 +1,7 @@
 close all;
 
 clear('vec_high','vec_low');
-img = imread('../Opencv_imagpros/data_images/5/5_51_small_circle.jpg');
+img = imread('../Opencv_imagpros/Distance_logs2/2500/100/2500_100_3.jpg');
 [r,c] = size(img);
 values = double(img(:,floor(c/2)));
 max_val = max(values);
@@ -44,5 +44,5 @@ plot(values_n,'k-x');
 plot(y, thValue_n*ones(1, length(y)), 'r--')
 hold off;
 
-clear('img','r','c','','max_val','min_val','avgValue','values_n');
+clear('r','c','','max_val','min_val','avgValue','values_n');
 clear('thValue_n','count_low','count_high','last','i');

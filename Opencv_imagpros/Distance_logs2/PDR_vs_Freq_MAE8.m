@@ -8,7 +8,7 @@ PDR = [1 0.995884 0.98 0 0 0 0 0;
        0 0 0 0 0 0 0 0];
 marks=['+','o','*','x','<','square'];
     
-figure('Name','Packet Delivery Ratio for Manchester Encoding (data size=8)');
+figure('Name','Packet Reception Ratio for Manchester Encoding (data size=8)');
 hold on;
 for i=1:6
     p = plot(dist, PDR(i,:),'-','DisplayName',num2str(freq(i)));
@@ -16,10 +16,10 @@ for i=1:6
 end
 hold off;
 
-title('Packet Delivery Ratio VS frequency (Manchester Encoding, DataSize=8, symbols=23)');
+title('Packet Reception Ratio VS frequency (Manchester Encoding, DataSize=8, symbols=23)');
 xlabel('Distance from Light (cm)');
-ylabel('Packet Delivery Ratio');
+ylabel('Packet Reception Ratio');
 lgd = legend('show');
 lgd.FontSize = 12;
 title(lgd,'Symbol frequency (Hz)')
-ylim([-0.2 1.2])d
+ylim([-0.2 1.2])

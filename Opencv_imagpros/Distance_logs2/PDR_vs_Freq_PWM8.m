@@ -6,7 +6,7 @@ PDR = [1 1 0 0 0 0 0 0;
        0 0 0 0 0 0 0 0];
 marks=['+','o','*','x','square'];
     
-figure('Name','Packet Delivery Ratio for PWM Encoding (data size=8)');
+figure('Name','Packet Reception Ratio for PWM Encoding (data size=8)');
 hold on;
 for i=1:4
     p = plot(dist, PDR(i,:),'-','DisplayName',num2str(freq(i)));
@@ -14,10 +14,9 @@ for i=1:4
 end
 hold off;
 
-title('Packet Delivery Ratio VS frequency (PWM Encoding, DataSize=8)');
+title('Packet Reception Ratio VS frequency (PWM Encoding, DataSize=8)');
 xlabel('Distance from Light (cm)');
-ylabel('Packet Delivery Ratio');
+ylabel('Packet Reception Ratio');
 lgd = legend('show');
 lgd.FontSize = 12;
-title(lgd,'Symbol frequency (Hz)')
 ylim([-0.2 1.2])
