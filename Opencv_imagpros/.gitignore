@@ -1,0 +1,9 @@
+# Cmake generated folder
+CmakeFiles/
+
+# Cmake generated files
+CMakeCache.txt
+cmake_install.cmake
+
+# Makefile
+Makefile

@@ -1,0 +1,7 @@
+Image :: MAE_50_1_small.jpg
+number of start of packets :: 4
+1 0 1 0 1 1 0 0 1 0 1 1 0 0 1 1 0 0 1   da  ---  correct
+1 1 0 1 0 0 1 0 1 1 0 1 0 1 0 0 1 0 1   31  ---  correct
+1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   ---  incorrect
+Image :: MAE_50_2_small.jpg
+number of start of packets :: 2

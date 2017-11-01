@@ -1,0 +1,13 @@
+import matplotlib.pyplot as plt
+
+file = open('edges.csv')
+lines = file.readlines()
+f = open("MAE_50_2_small5_line_image.jpg", "rb")
+img = f.read()
+
+edges=[]
+for i in range(len(lines)):
+	edges.append(int(lines[i]))
+
+##plt.plot(img)
+##plt.show()
